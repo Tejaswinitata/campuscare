@@ -1,0 +1,92 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>CampusCare</title>
+<style>
+:root{--bg:#fdf8ff;--card:#fff;--ink:#4a4458;--mute:#8b849a;--line:#ece4f5;--lav:#e6dcff;--mint:#d5f5e3;--peach:#ffe3d3;--sky:#d6ecff;--rose:#ffdce8;--lemon:#fff5c9;--ac:#a78bfa}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:"Nunito","Segoe UI",sans-serif}
+header{text-align:center;padding:24px 12px 6px}h1{margin:0}h1 span{color:var(--ac)}.sub{color:var(--mute);margin:4px}
+nav{display:flex;gap:8px;justify-content:center;padding:10px}main{max-width:960px;margin:auto;padding:0 14px 40px}
+button{border:0;border-radius:99px;padding:8px 16px;font:inherit;font-weight:700;color:var(--ink);background:var(--lav);cursor:pointer}
+button:hover{transform:translateY(-1px)}button.on,.go{background:var(--ac);color:#fff}
+.card{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:18px;margin-bottom:14px}
+input,select,textarea{width:100%;border:1.5px solid var(--line);border-radius:12px;padding:9px 11px;font:inherit;background:var(--bg);color:var(--ink)}
+textarea{min-height:100px}.row{display:grid;grid-template-columns:1fr 1fr;gap:10px}@media(max-width:600px){.row{grid-template-columns:1fr}}
+.chips{display:flex;flex-wrap:wrap;gap:8px}.chips button{border-radius:14px;font-size:.82rem}
+.pill{display:inline-block;border-radius:99px;padding:2px 10px;font-size:.78rem;font-weight:800;margin-right:5px}
+.High{background:var(--rose)}.Medium{background:var(--lemon)}.Low{background:var(--mint)}.cat{background:var(--sky)}.st{background:var(--lav)}
+.res{background:linear-gradient(135deg,var(--lav),var(--sky));border-radius:16px;padding:14px;margin-top:12px}
+.bar{height:9px;border-radius:9px;background:var(--line);overflow:hidden;margin:3px 0 8px}.bar i{display:block;height:100%;background:var(--ac)}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px;margin-bottom:14px}.stat{border-radius:16px;padding:12px;text-align:center}.stat b{display:block;font-size:1.5rem}
+.item{border:1px solid var(--line);border-radius:14px;padding:12px;margin-bottom:9px;background:var(--bg)}.meta{color:var(--mute);font-size:.8rem}
+.acts{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}.acts button{font-size:.78rem;padding:5px 12px}.hide{display:none}
+.f{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px}.f select,.f input{width:auto;flex:1;min-width:130px}
+</style></head><body>
+<header><h1>Campus<span>Care</span> 🌸</h1><p class="sub">AI complaint categorization &amp; prioritization</p></header>
+<nav id="nav" class="hide"><button class="on" id="n1">✍️ Submit</button><button id="n2">📋 My Complaints</button><button id="n3">📊 Dashboard</button><button id="lo">🚪 Logout</button></nav>
+<main>
+<section id="auth"><div class="card" style="max-width:420px;margin:auto"><h3 id="at">Student Login</h3>
+ <input id="rname" class="hide" placeholder="Full name"><br><input id="u" placeholder="Roll number (admins: username)"><br><br><input id="p" type="password" placeholder="Password"><br>
+ <p class="meta" id="aerr" style="color:#c0577a"></p><button class="go" id="abtn">Login</button> <button id="sw">New student? Register</button></div></section>
+<section id="s1" class="hide">
+ <div class="card"><b>✨ Prebuilt complaints (click to fill)</b><div class="chips" id="chips" style="margin-top:8px"></div></div>
+ <div class="card"><textarea id="text" placeholder="Describe your complaint..."></textarea>
+  <p><label><input type="checkbox" id="anon" style="width:auto"> Submit anonymously (hidden from admins)</label></p>
+  <button class="go" id="send">🤖 Analyze &amp; Submit</button><div id="out"></div></div></section>
+<section id="s2" class="hide"><div class="card"><div id="mine"></div></div></section>
+<section id="s3" class="hide"><div class="stats" id="stats"></div>
+ <div class="card"><div class="f"><input id="fq" placeholder="Search roll / ID (e.g. CMP3)"><select id="fc"><option value="">All categories</option></select>
+  <select id="fp"><option value="">All priorities</option><option>High</option><option>Medium</option><option>Low</option></select>
+  <select id="fs"><option value="">All statuses</option></select></div><div id="list"></div></div></section>
+</main>
+<script>
+const $=i=>document.getElementById(i),ST=["Submitted","Categorized","Assigned","In Progress","Resolved","Closed"];
+const CATS=["Infrastructure","Hostel & Mess","Academic","IT & Wi-Fi","Transport","Safety & Harassment","Administrative"];
+const SAMPLES=[["💡 Sparking socket","The electric socket in classroom B-204 is sparking and giving shocks. Students are scared to sit near it."],
+["🍛 Mess hygiene","Cockroaches were found in the dinner served at the hostel mess. The dining area is dirty."],
+["📶 Wi-Fi down","The Wi-Fi in the computer lab is not working for 3 days. We cannot submit assignments on the portal."],
+["🚨 Ragging","Some seniors are harassing and threatening first-year students near the hostel gate at night."],
+["🚌 Bus late","The college bus on route 5 is running late every day this week and we miss the first lecture."],
+["📅 Timetable clash","There is a clash between the Machine Learning lecture and the Data Mining lab in the timetable."],
+["🧾 Fee receipt","I paid my semester fee but the receipt is not generated yet. I need it for the scholarship."],
+["🚿 No water","There is no water in the hostel block since morning. Washrooms are unusable, this is an emergency."]];
+const e=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const api=(u,m="GET",b)=>fetch(u,{method:m,headers:{"Content-Type":"application/json"},body:b?JSON.stringify(b):undefined}).then(async r=>({ok:r.ok,d:await r.json().catch(()=>({}))}));
+$("chips").innerHTML=SAMPLES.map((s,i)=>`<button data-i="${i}">${s[0]}</button>`).join("");
+$("chips").onclick=x=>{const b=x.target.closest("button");if(b)$("text").value=SAMPLES[b.dataset.i][1]};
+CATS.forEach(c=>$("fc").add(new Option(c,c)));ST.forEach((s,i)=>$("fs").add(new Option(s,i)));
+let reg=false,role="";
+$("sw").onclick=()=>{reg=!reg;$("at").textContent=reg?"Student Registration":"Student Login";$("abtn").textContent=reg?"Register":"Login";$("sw").textContent=reg?"Back to login":"New student? Register";$("rname").classList.toggle("hide",!reg);$("aerr").textContent=""};
+$("abtn").onclick=async()=>{
+ if(reg){const r=await api("/api/register","POST",{name:$("rname").value,roll:$("u").value,password:$("p").value});
+  if(!r.ok){$("aerr").textContent=r.d.error;return}reg=false;$("sw").click();$("sw").click();$("aerr").textContent="Registered! Please log in.";return}
+ const r=await api("/api/login","POST",{username:$("u").value,password:$("p").value});
+ if(!r.ok){$("aerr").textContent=r.d.error;return}enter(r.d)};
+function enter(u){role=u.role;$("auth").classList.add("hide");$("nav").classList.remove("hide");
+ $("n1").classList.toggle("hide",role=="admin");$("n2").classList.toggle("hide",role=="admin");$("n3").classList.toggle("hide",role!="admin");
+ role=="admin"?tab(3):tab(1)}
+$("lo").onclick=async()=>{await api("/api/logout","POST");location.reload()};
+["n1","n2","n3"].forEach((id,i)=>$(id).onclick=()=>tab(i+1));
+function tab(n){[1,2,3].forEach(i=>{$("s"+i).classList.toggle("hide",i!=n);$("n"+i).classList.toggle("on",i==n)});if(n==2)mine();if(n==3)load()}
+$("send").onclick=async()=>{
+ const r=await api("/api/complaints","POST",{text:$("text").value,anonymous:$("anon").checked}),d=r.d;
+ if(!r.ok){$("out").innerHTML=`<div class="res">${e(d.error)}</div>`;return}
+ $("out").innerHTML=`<div class="res"><h3>✅ ${d.id} registered</h3><span class="pill cat">${e(d.category)}</span><span class="pill ${d.priority}">${d.priority} priority</span>
+ <p class="meta">Category confidence ${Math.round(d.confidence*100)}%</p><div class="bar"><i style="width:${d.confidence*100}%"></i></div>
+ <p class="meta">Priority score ${d.score}/100</p><div class="bar"><i style="width:${d.score}%"></i></div>
+ <p><b>Routed to:</b> ${e(d.dept)} · <b>Target:</b> ${d.sla} hrs</p><p class="meta">${d.why.map(e).join(" · ")}</p>
+ ${d.dup_of?`<p>⚠️ Similar to open complaint <b>${d.dup_of}</b></p>`:""}</div>`;$("text").value=""};
+const steps=s=>'<div class="acts">'+ST.map((x,i)=>`<span class="pill" style="background:${i<=s?"var(--mint)":"var(--line)"}">${x}</span>`).join("")+'</div>';
+function card(d,admin){return `<div class="item"><b>${d.id}</b> <span class="pill cat">${e(d.category)}</span><span class="pill ${d.priority}">${d.priority}</span><span class="pill st">${d.status_name}</span>${d.breached?'<span class="pill High">⏰ SLA breached</span>':""}
+ <p>${e(d.text)}</p><p class="meta">${e(d.name)} (${e(d.roll)}) → ${e(d.dept)} · confidence ${Math.round(d.confidence*100)}%${d.dup_of?" · similar to "+d.dup_of:""}</p>${steps(d.status)}
+ <div class="acts">${admin?`${d.status<5?`<button onclick="act('${d.id}','status')">➡️ Move to ${ST[d.status+1]}</button>`:""}${d.status<4?`<button onclick="act('${d.id}','escalate')">🔺 Escalate</button>`:""}<button onclick="act('${d.id}','del')">🗑️ Delete</button>`
+ :(d.status==4?`<button onclick="fb('${d.id}','confirm')">👍 Confirm resolved</button><button onclick="fb('${d.id}','reopen')">↩️ Reopen</button>`:"")}</div></div>`}
+async function mine(){const r=await api("/api/complaints");$("mine").innerHTML=r.d.length?r.d.map(d=>card(d,false)).join(""):'<p class="meta">No complaints yet 🌱</p>'}
+async function fb(id,a){await api(`/api/complaints/${id.slice(3)}/feedback`,"POST",{action:a});mine()}
+async function load(){
+ const p=new URLSearchParams({roll:$("fq").value,category:$("fc").value,priority:$("fp").value,status:$("fs").value});
+ const [L,S]=await Promise.all([api("/api/complaints?"+p),api("/api/stats")]);
+ $("stats").innerHTML=[["Total",S.d.total,"lav"],["Open",S.d.open,"sky"],["High priority",S.d.high,"rose"],["Resolved",S.d.resolved,"mint"]].map(a=>`<div class="stat" style="background:var(--${a[2]})"><b>${a[1]}</b>${a[0]}</div>`).join("");
+ $("list").innerHTML=L.d.length?L.d.map(d=>card(d,true)).join(""):'<p class="meta">No complaints found 🌱</p>'}
+async function act(id,a){const n=id.slice(3);a=="del"?await api("/api/complaints/"+n,"DELETE"):await api(`/api/complaints/${n}/${a}`,"POST",{});load()}
+["fq","fc","fp","fs"].forEach(i=>$(i).oninput=load);
+api("/api/me").then(r=>{if(r.ok)enter(r.d)});
+</script></body></html>
