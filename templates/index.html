@@ -1,35 +1,78 @@
 <!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>CampusCare</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&family=Quicksand:wght@500;600;700&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#fdf8ff;--card:#fff;--ink:#4a4458;--mute:#8b849a;--line:#ece4f5;--lav:#e6dcff;--mint:#d5f5e3;--peach:#ffe3d3;--sky:#d6ecff;--rose:#ffdce8;--lemon:#fff5c9;--ac:#a78bfa}
-*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:"Nunito","Segoe UI",sans-serif}
-header{text-align:center;padding:24px 12px 6px}h1{margin:0}h1 span{color:var(--ac)}.sub{color:var(--mute);margin:4px}
-nav{display:flex;gap:8px;justify-content:center;padding:10px}main{max-width:960px;margin:auto;padding:0 14px 40px}
-button{border:0;border-radius:99px;padding:8px 16px;font:inherit;font-weight:700;color:var(--ink);background:var(--lav);cursor:pointer}
-button:hover{transform:translateY(-1px)}button.on,.go{background:var(--ac);color:#fff}
-.card{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:18px;margin-bottom:14px}
-input,select,textarea{width:100%;border:1.5px solid var(--line);border-radius:12px;padding:9px 11px;font:inherit;background:var(--bg);color:var(--ink)}
-textarea{min-height:100px}.row{display:grid;grid-template-columns:1fr 1fr;gap:10px}@media(max-width:600px){.row{grid-template-columns:1fr}}
-.chips{display:flex;flex-wrap:wrap;gap:8px}.chips button{border-radius:14px;font-size:.82rem}
-.pill{display:inline-block;border-radius:99px;padding:2px 10px;font-size:.78rem;font-weight:800;margin-right:5px}
+/* Ghibli palette. Keep these variable names: the JS uses var(--lav), var(--mint), var(--sky), var(--rose), var(--line) */
+:root{--bg:#fbf3e0;--card:#fffaf0;--ink:#23392c;--mute:#6b7d6c;--line:#e3d9bc;--lav:#e4edc9;--mint:#cfe8c2;--peach:#fbdcc4;--sky:#cfe8fb;--rose:#f9ccd7;--lemon:#fbefb5;--ac:#3f7a3a;--deep:#2b5a2e;
+/* To use a painted background: save it as static/bg.jpg and change none to url(/static/bg.jpg) */
+--bgimg:none}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;color:var(--ink);font-family:"Quicksand","Segoe UI",sans-serif;font-weight:600;
+ background:var(--bgimg),radial-gradient(ellipse 60% 18% at 15% 14%,#fff 0 60%,transparent 62%),radial-gradient(ellipse 50% 14% at 80% 26%,#ffffffcc 0 60%,transparent 62%),
+ radial-gradient(ellipse 90% 30% at 20% 100%,#4f9a45 0 60%,transparent 62%),radial-gradient(ellipse 80% 26% at 85% 100%,#3f8a3d 0 60%,transparent 62%),
+ linear-gradient(180deg,#8ec8f2 0%,#cfe8fb 38%,#e9f3d4 70%,#a9d28a 100%);
+ background-size:cover;background-attachment:fixed;background-position:center}
+h1,h2,h3{font-family:"Baloo 2","Quicksand",sans-serif;margin:0;color:var(--ink)}
+header{display:flex;justify-content:center;padding:16px 12px 4px}
+.brand{display:inline-flex;align-items:center;gap:8px;background:var(--card);border:1.5px solid var(--deep);border-radius:99px;padding:4px 18px}
+.brand h1{font-size:1.2rem}.sub{display:none}
+nav{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;padding:12px}
+main{max-width:960px;margin:auto;padding:0 14px 40px}
+button{border:1.5px solid var(--deep);border-radius:99px;padding:8px 18px;font:inherit;font-weight:700;color:var(--deep);background:var(--card);cursor:pointer;transition:transform .15s,background .15s}
+button:hover{transform:translateY(-2px);background:var(--lav)}
+button.on,.go{background:var(--ac);color:#fff;border-color:var(--ac)}button.on:hover,.go:hover{background:var(--deep)}
+button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:3px solid #f2a7bb;outline-offset:2px}
+.card{background:var(--card);border:1.5px solid var(--deep);border-radius:22px;padding:20px;margin-bottom:16px;box-shadow:0 8px 22px #2b5a2e26}
+.card h3{font-size:1.35rem;padding-bottom:8px;margin-bottom:12px;border-bottom:2px solid var(--ac)}
+input,select,textarea{width:100%;border:1.5px solid #b9b08f;border-radius:16px;padding:11px 14px;font:inherit;background:#fffdf6;color:var(--ink)}
+input::placeholder,textarea::placeholder{color:#7d8a78}
+textarea{min-height:110px}
+#u,#p,#rname{padding-left:44px;background-repeat:no-repeat;background-position:14px center;background-size:20px;margin-bottom:12px}
+#u{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%232b5a2e'%3E%3Ccircle cx='12' cy='8' r='4.5'/%3E%3Cpath d='M3.5 21c0-5 4-7.5 8.500-7.500S20.500 16 20.500 21z'/%3E%3C/svg%3E")}
+#p{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%232b5a2e'%3E%3Crect x='4' y='10.500' width='16' height='11' rx='2.500'/%3E%3Cpath d='M7.500 10.500V8a4.500 4.500 0 019 0v2.500' fill='none' stroke='%232b5a2e' stroke-width='2.200'/%3E%3C/svg%3E")}
+#rname{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%232b5a2e'%3E%3Ccircle cx='12' cy='8' r='4.500'/%3E%3Cpath d='M3.500 21c0-5 4-7.500 8.500-7.500S20.500 16 20.500 21z'/%3E%3C/svg%3E")}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:10px}@media(max-width:600px){.row{grid-template-columns:1fr}}
+.chips{display:flex;flex-wrap:wrap;gap:8px}.chips button{font-size:.84rem;padding:6px 14px;background:var(--lav)}
+.pill{display:inline-block;border-radius:99px;padding:2px 11px;font-size:.78rem;font-weight:700;margin-right:5px;border:1px solid #2b5a2e40}
 .High{background:var(--rose)}.Medium{background:var(--lemon)}.Low{background:var(--mint)}.cat{background:var(--sky)}.st{background:var(--lav)}
-.res{background:linear-gradient(135deg,var(--lav),var(--sky));border-radius:16px;padding:14px;margin-top:12px}
-.bar{height:9px;border-radius:9px;background:var(--line);overflow:hidden;margin:3px 0 8px}.bar i{display:block;height:100%;background:var(--ac)}
-.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px;margin-bottom:14px}.stat{border-radius:16px;padding:12px;text-align:center}.stat b{display:block;font-size:1.5rem}
-.item{border:1px solid var(--line);border-radius:14px;padding:12px;margin-bottom:9px;background:var(--bg)}.meta{color:var(--mute);font-size:.8rem}
+.res{background:linear-gradient(135deg,#e7f3d3,var(--sky));border:1.5px solid var(--deep);border-radius:18px;padding:16px;margin-top:14px}
+.bar{height:10px;border-radius:9px;background:#fffaf0;border:1px solid var(--line);overflow:hidden;margin:3px 0 8px}.bar i{display:block;height:100%;background:linear-gradient(90deg,#7bbf62,var(--ac))}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px;margin-bottom:16px}
+.stat{border-radius:18px;padding:12px;text-align:center;border:1.5px solid var(--deep)}.stat b{display:block;font:800 1.7rem "Baloo 2",sans-serif}
+.item{border:1.5px solid var(--line);border-radius:16px;padding:14px;margin-bottom:10px;background:#fffdf6}.item p{margin:8px 0}.meta{color:var(--mute);font-size:.82rem}
 .acts{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}.acts button{font-size:.78rem;padding:5px 12px}.hide{display:none}
-.f{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px}.f select,.f input{width:auto;flex:1;min-width:130px}
+.f{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}.f select,.f input{width:auto;flex:1;min-width:130px}
+/* Welcome banner (login page) */
+.hero{position:relative;overflow:hidden;border:1.5px solid var(--deep);border-radius:26px;margin:6px auto 18px;max-width:640px;min-height:220px;
+ background:radial-gradient(ellipse 40% 24% at 75% 24%,#fff 0 60%,transparent 62%),radial-gradient(ellipse 36% 20% at 92% 50%,#fffc 0 60%,transparent 62%),linear-gradient(180deg,#78bdef,#cfe8fb 70%,#e9f3d4)}
+.hero svg{position:absolute;right:0;bottom:0;height:100%;width:62%}
+.hero .txt{position:relative;width:64%;min-height:220px;padding:22px 22px 18px;background:linear-gradient(90deg,var(--card) 78%,transparent);border-radius:0 40px 40px 0}
+.hero h2{font-size:clamp(1.7rem,6.5vw,2.7rem);line-height:1.05;font-weight:800}
+.hero h2:after{content:"";display:block;height:6px;width:82%;margin-top:6px;border-radius:9px;background:#f4a9bd}
+.hero p{margin:12px 0 0;font-size:.9rem;max-width:30ch}
+/* falling sakura */
+.petals{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:5}
+.petals i{position:absolute;top:-24px;background:#f7b9c9;border-radius:150% 0 150% 0;opacity:.85;animation:fall linear infinite}
+@keyframes fall{to{transform:translate(var(--dx),110vh) rotate(540deg)}}
+@media(prefers-reduced-motion:reduce){.petals{display:none}button{transition:none}}
 </style></head><body>
-<header><h1>Campus<span>Care</span> 🌸</h1><p class="sub">AI complaint categorization &amp; prioritization</p></header>
+<header><div class="brand">🎓<h1>CampusCare</h1>🌸</div><p class="sub">AI complaint categorization &amp; prioritization</p></header>
 <nav id="nav" class="hide"><button class="on" id="n1">✍️ Submit</button><button id="n2">📋 My Complaints</button><button id="n3">📊 Dashboard</button><button id="lo">🚪 Logout</button></nav>
 <main>
-<section id="auth"><div class="card" style="max-width:420px;margin:auto"><h3 id="at">Student Login</h3>
- <input id="rname" class="hide" placeholder="Full name"><br><input id="u" placeholder="Roll number (admins: username)"><br><br><input id="p" type="password" placeholder="Password"><br>
- <p class="meta" id="aerr" style="color:#c0577a"></p><button class="go" id="abtn">Login</button> <button id="sw">New student? Register</button></div></section>
+<section id="auth">
+ <div class="hero"><svg viewBox="0 0 300 220" preserveAspectRatio="xMaxYMax slice" aria-hidden="true"><circle cx="40" cy="190" r="46" fill="#5da64d"/><circle cx="270" cy="170" r="52" fill="#4f9a45"/><circle cx="230" cy="205" r="46" fill="#6bb356"/>
+  <rect x="120" y="100" width="130" height="120" fill="#efe0b4"/><rect x="170" y="52" width="38" height="60" fill="#f3e6bf"/><path d="M165 54l24-30 24 30z" fill="#6f8aa8"/><circle cx="189" cy="78" r="10" fill="#fffaf0" stroke="#2b5a2e" stroke-width="2"/><path d="M189 72v6h5" stroke="#2b5a2e" stroke-width="2" fill="none"/>
+  <g fill="#9fc6e6"><rect x="132" y="115" width="14" height="18"/><rect x="156" y="115" width="14" height="18"/><rect x="208" y="115" width="14" height="18"/><rect x="232" y="115" width="14" height="18"/><rect x="132" y="150" width="14" height="18"/><rect x="156" y="150" width="14" height="18"/><rect x="208" y="150" width="14" height="18"/><rect x="232" y="150" width="14" height="18"/></g>
+  <circle cx="110" cy="195" r="30" fill="#4f9a45"/><circle cx="20" cy="30" r="22" fill="#f7b9c9"/><circle cx="48" cy="18" r="16" fill="#f4a9bd"/><circle cx="8" cy="58" r="14" fill="#f9ccd7"/></svg>
+  <div class="txt"><h2>Welcome to CampusCare</h2><p>Tell us what's wrong and we'll send it to the right team.</p></div></div>
+ <div class="card" style="max-width:420px;margin:auto"><h3 id="at">🌿 Student Login</h3>
+ <input id="rname" class="hide" placeholder="Full name"><input id="u" placeholder="Roll number (admins: username)"><input id="p" type="password" placeholder="Password">
+ <p class="meta" id="aerr" style="color:#b0405f"></p><button class="go" id="abtn">Login</button> <button id="sw">New student? Register</button></div></section>
 <section id="s1" class="hide">
- <div class="card"><b>✨ Prebuilt complaints (click to fill)</b><div class="chips" id="chips" style="margin-top:8px"></div></div>
+ <div class="card"><b>✨ Prebuilt complaints (click to fill)</b><div class="chips" id="chips" style="margin-top:10px"></div></div>
  <div class="card"><textarea id="text" placeholder="Describe your complaint..."></textarea>
-  <p><label><input type="checkbox" id="anon" style="width:auto"> Submit anonymously (hidden from admins)</label></p>
+  <p><label><input type="checkbox" id="anon" style="width:auto;accent-color:#3f7a3a"> Submit anonymously (hidden from admins)</label></p>
   <button class="go" id="send">🤖 Analyze &amp; Submit</button><div id="out"></div></div></section>
 <section id="s2" class="hide"><div class="card"><div id="mine"></div></div></section>
 <section id="s3" class="hide"><div class="stats" id="stats"></div>
@@ -54,7 +97,7 @@ $("chips").innerHTML=SAMPLES.map((s,i)=>`<button data-i="${i}">${s[0]}</button>`
 $("chips").onclick=x=>{const b=x.target.closest("button");if(b)$("text").value=SAMPLES[b.dataset.i][1]};
 CATS.forEach(c=>$("fc").add(new Option(c,c)));ST.forEach((s,i)=>$("fs").add(new Option(s,i)));
 let reg=false,role="";
-$("sw").onclick=()=>{reg=!reg;$("at").textContent=reg?"Student Registration":"Student Login";$("abtn").textContent=reg?"Register":"Login";$("sw").textContent=reg?"Back to login":"New student? Register";$("rname").classList.toggle("hide",!reg);$("aerr").textContent=""};
+$("sw").onclick=()=>{reg=!reg;$("at").textContent=reg?"🌿 Student Registration":"🌿 Student Login";$("abtn").textContent=reg?"Register":"Login";$("sw").textContent=reg?"Back to login":"New student? Register";$("rname").classList.toggle("hide",!reg);$("aerr").textContent=""};
 $("abtn").onclick=async()=>{
  if(reg){const r=await api("/api/register","POST",{name:$("rname").value,roll:$("u").value,password:$("p").value});
   if(!r.ok){$("aerr").textContent=r.d.error;return}reg=false;$("sw").click();$("sw").click();$("aerr").textContent="Registered! Please log in.";return}
@@ -89,4 +132,7 @@ async function load(){
 async function act(id,a){const n=id.slice(3);a=="del"?await api("/api/complaints/"+n,"DELETE"):await api(`/api/complaints/${n}/${a}`,"POST",{});load()}
 ["fq","fc","fp","fs"].forEach(i=>$(i).oninput=load);
 api("/api/me").then(r=>{if(r.ok)enter(r.d)});
+/* sakura petals */
+(()=>{const w=document.createElement("div");w.className="petals";for(let i=0;i<14;i++){const s=document.createElement("i"),z=7+Math.random()*8;
+ s.style.cssText=`left:${Math.random()*100}%;width:${z}px;height:${z}px;animation-duration:${10+Math.random()*9}s;animation-delay:-${Math.random()*16}s;--dx:${Math.random()*160-60}px`;w.appendChild(s)}document.body.appendChild(w)})();
 </script></body></html>
